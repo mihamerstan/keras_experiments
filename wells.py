@@ -5,10 +5,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn import linear_model
 from sklearn import svm
-from sklearn import cross_validation
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
-from sklearn.grid_search import GridSearchCV
 from datetime import datetime
 #from sklearn.metrics import classification_report
 
@@ -41,8 +39,8 @@ def oneHotwell(features_df):
     quantity_mat, source_mat, waterpoint_mat],axis=1)
 
 #Import training data
-labels_df=pd.DataFrame.read_csv("Training_set_labels.csv").reset_index(drop=False)
-features_df=pd.DataFrame.read_csv("Training_set.csv").reset_index(drop=False)
+labels_df=pd.read_csv("Training_set_labels.csv").reset_index(drop=False)
+features_df=pd.read_csv("Training_set.csv").reset_index(drop=False)
 
 #Turn T/F features into binary
 permit = features_df['permit'].copy()

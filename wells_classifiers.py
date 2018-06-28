@@ -10,11 +10,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn import linear_model
 from sklearn import svm
-from sklearn import cross_validation
+from sklearn import model_selection
 from sklearn import preprocessing
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 
 #Suppress FutureWarning
 def fxn():
@@ -35,7 +35,7 @@ def accuracy_score(X,y,clf):
 
 #Performs cross-validation on clf, outputting each fold to screen
 def cross_val(X,y,clf,folds=5):
-    cv_scores = cross_validation.cross_val_score(clf,X,y,cv=folds)
+    cv_scores = model_selection.cross_val_score(clf,X,y,cv=folds)
     print("Cross-Validation with %i folds. Mean accuracy: %.4f" % (folds,np.mean(cv_scores)))
     
 #Creates a training and test, then runs logisticRegression on each single feature, 
@@ -82,10 +82,10 @@ def LR_mhs(X_train,X_test,y_train,y_test):
     
 # SGDClassifier
 def SGD_mhs(X_train_scaled,X_test_scaled,y_train,y_test):
-    SGD_clf = linear_model.SGDClassifier(max_iter=1000)
+    SGD_clf = linear_model.SGDClassifier(max_iter=1000,tol=1e-3)
     SGD_param_grid = {'penalty':['l1','l2','elasticnet'],'loss':['hinge','log','squared_loss'],'alpha':[.000003,.00001,.00003,.0001,.0003,.001]}
     SGD_grid = grid_optimize(SGD_clf,SGD_param_grid,X_train_scaled,y_train)
-    SGD_clf = linear_model.SGDClassifier(alpha=SGD_grid.best_params_['alpha'],penalty=SGD_grid.best_params_['penalty'],loss=SGD_grid.best_params_['loss'])
+    SGD_clf = linear_model.SGDClassifier(loss=SGD_grid.best_params_['loss'],penalty=SGD_grid.best_params_['penalty'],alpha=SGD_grid.best_params_['alpha'],max_iter=1000,tol=1e-3)
 #    SGD_acc = single_feat(X_train_scaled,X_test_scaled,y_train,y_test,SGD_clf)
     SGD_clf.fit(X_train_scaled,y_train)
     train_acc = accuracy_score(X_train_scaled,y_train,SGD_clf)
@@ -127,7 +127,7 @@ def RF_mhs(X_train,X_test,y_train,y_test):
 
 # MAIN 
 #Create training and test sets, scaled and not
-X_train,X_test,y_train,y_test = cross_validation.train_test_split(X,y,test_size=0.35)
+X_train,X_test,y_train,y_test = model_selection.train_test_split(X,y,test_size=0.35)
 X_train_scaled = X_train.copy()
 X_test_scaled = X_test.copy()
 scal=[]
